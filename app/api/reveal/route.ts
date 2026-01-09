@@ -50,9 +50,9 @@ export async function POST(req: Request) {
     const systemPrompt = `You are the Epiphany Engine.
     User Profile: Age ${age} (${bracket}), Sex: ${sex}.
     
-    IMPORTANT: Return ONLY valid JSON. No markdown formatting, no intro text.
+    IMPORTANT: Return ONLY valid JSON. 
     ${structureInstruction}
-    Keep narrative under 200 words to ensure valid JSON.`;
+    Keep texts concise. No markdown in JSON values.`;
 
     let userPrompt = "";
 
@@ -82,7 +82,7 @@ export async function POST(req: Request) {
             { role: "system", content: systemPrompt },
             { role: "user", content: userPrompt }
         ],
-        max_tokens: 1024,
+        max_tokens: 2048,
         temperature: 0.7
     });
 
