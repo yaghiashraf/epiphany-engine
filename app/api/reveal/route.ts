@@ -27,52 +27,44 @@ export async function POST(req: Request) {
     
     if (action) {
         structureInstruction = `
-    IMPORTANT: For this action, return ONLY the NEW node(s) and the NEW narrative section.
-    Structure:
-    {
-      "nodes": [
-        { "id": "new_node_id", "parentId": "root", "label": "Title", "type": "${action === 'deepen' ? 'fractal' : 'insight'}", "text": "Insight..." }
-      ],
-      "narrative": "## New Section Title\n\nContent..."
-    }`;
+    TASK: Return 2 parts separated by "|||".
+    Part 1: The Title and short text for the new node.
+    Part 2: The new narrative section.
+    
+    Format:
+    Title: [Short Title]
+    Insight: [The core insight text for the node]
+    |||
+    ## [New Section Title]
+    [Content...]`;
     } else {
         structureInstruction = `
-    Structure:
-    {
-      "nodes": [
-        { "id": "root", "label": "Title", "type": "core", "text": "Insight..." },
-        { "id": "n1", "parentId": "root", "label": "Title", "type": "challenge", "text": "Insight..." },
-        { "id": "n2", "parentId": "root", "label": "Title", "type": "resolution", "text": "Insight..." }
-      ],
-      "narrative": "## Title\n\nContent..."
-    }`;
+    TASK: Return 4 parts separated by "|||".
+    Part 1: Root Node (The core philosophical shift).
+    Part 2: Challenge Node (The internal fear).
+    Part 3: Resolution Node (The timeline where they let go).
+    Part 4: The Full Narrative.
+    
+    Format:
+    Title: [Root Title]
+    Insight: [Root Insight]
+    |||
+    Title: [Challenge Title]
+    Insight: [Challenge Insight]
+    |||
+    Title: [Resolution Title]
+    Insight: [Resolution Insight]
+    |||
+    ## [Main Title]
+    [Full narrative content...]`;
     }
 
     const systemPrompt = `You are the Epiphany Engine.
     User Profile: Age ${age} (${bracket}), Sex: ${sex}.
     
-    IMPORTANT: Return ONLY valid JSON. 
+    IMPORTANT: Do NOT output JSON. Use the "|||" separator exactly as requested.
     ${structureInstruction}
-    Keep texts concise. No markdown in JSON values.`;
-
-    let userPrompt = "";
-
-    if (action === "deepen") {
-        userPrompt = `The user wants to "Drill Deeper" into this previous insight: "${previousNarrative}". 
-        Reveal the SUBCONSCIOUS ROOT (childhood/past) of this pattern.
-        Output JSON with 1 new node (type: 'fractal') connected to 'root' and a narrative extension starting with "## The Root".`;
-    } else if (action === "challenge") {
-        userPrompt = `The user wants to "Challenge" this previous insight: "${previousNarrative}".
-        Provide a COUNTER-INTUITIVE perspective that flips the problem on its head.
-        Output JSON with 1 new node (type: 'insight') connected to 'root' and a narrative extension starting with "## The Flip".`;
-    } else {
-        userPrompt = `Analyze this dilemma: "${query}".
-        Theme: ${bracket} life stage challenges.
-        1. Root Node: The core philosophical shift needed.
-        2. Challenge Node: The internal fear blocking them (be specific to ${sex}, age ${age}).
-        3. Resolution Node: The timeline where they let go.
-        Narrative should be 3 paragraphs, formatted with Markdown headers.`;
-    }
+    Keep it profound but concise.`;
 
     const hf = new HfInference(HF_TOKEN);
 
@@ -89,30 +81,64 @@ export async function POST(req: Request) {
 
     let text = result.choices[0].message.content || "";
     
-    // Aggressive cleanup: Remove markdown code blocks and trailing text
-    text = text.replace(/```json/g, "").replace(/```/g, "").trim();
+    // Robust Text Parsing Strategy
+    const parts = text.split("|||").map(p => p.trim());
     
-    // Find the first '{' and the last '}' to isolate JSON
-    const firstBrace = text.indexOf('{');
-    const lastBrace = text.lastIndexOf('}');
-    
-    if (firstBrace !== -1 && lastBrace !== -1) {
-        text = text.substring(firstBrace, lastBrace + 1);
-        try {
-            // Use jsonrepair instead of JSON.parse directly
-            const repaired = jsonrepair(text);
-            const json = JSON.parse(repaired);
-            return NextResponse.json(json);
-        } catch (e: any) {
-             console.error("JSON Repair Failed:", text);
-             return NextResponse.json({ error: `JSON Error: ${e.message}` }, { status: 500 });
-        }
-    } else {
+    if (action) {
+        // Expecting 2 parts: Node, Narrative
+        if (parts.length < 2) throw new Error("AI response incomplete (missing separator |||)");
+        
+        const nodeText = parts[0];
+        const narrativeText = parts[1];
+        
+        const titleMatch = nodeText.match(/Title:\s*(.+)/);
+        const insightMatch = nodeText.match(/Insight:\s*([\s\S]+)/);
+        
         return NextResponse.json({
             nodes: [
-                { id: "root", label: "Analysis Failed", type: "core", text: "The engine could not parse the infinite." }
+                { 
+                    id: `node_${Date.now()}`, 
+                    parentId: "root", 
+                    label: titleMatch ? titleMatch[1].trim() : "New Insight", 
+                    type: action === 'deepen' ? 'fractal' : 'insight', 
+                    text: insightMatch ? insightMatch[1].trim() : nodeText 
+                }
             ],
-            narrative: "## Connection Interrupted\n\nThe lattice is recalibrating. Please try again."
+            narrative: narrativeText
+        });
+        
+    } else {
+        // Expecting 4 parts: Root, Challenge, Resolution, Narrative
+        if (parts.length < 4) {
+            // Fallback parsing if AI messed up separators
+            console.warn("AI messed up separators, falling back to simple structure");
+            return NextResponse.json({
+                nodes: [
+                    { id: "root", label: "Core Shift", type: "core", text: text.substring(0, 100) + "..." }
+                ],
+                narrative: text
+            });
+        }
+        
+        const parseNode = (raw: string, id: string, type: string, parentId?: string) => {
+             const titleMatch = raw.match(/Title:\s*(.+)/);
+             const insightMatch = raw.match(/Insight:\s*([\s\S]+)/);
+             return {
+                 id,
+                 parentId,
+                 label: titleMatch ? titleMatch[1].trim() : "Insight",
+                 type,
+                 text: insightMatch ? insightMatch[1].trim() : raw
+             };
+        };
+
+        return NextResponse.json({
+            nodes: [
+                parseNode(parts[0], "root", "core"),
+                parseNode(parts[1], "n1", "challenge", "root"),
+                parseNode(parts[2], "n2", "resolution", "root")
+            ],
+            narrative: parts[3]
         });
     }
 
