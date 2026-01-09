@@ -1,4 +1,4 @@
-import { Zap, Flame, Cpu, Globe, Bitcoin, Pickaxe, Scroll, Search, Anchor, Hammer, Rocket, Lightbulb } from 'lucide-react';
+import { Zap, Flame, Cpu, Globe, Bitcoin, Pickaxe, Scroll, Search, Anchor, Hammer, Rocket, Lightbulb, Skull, Shield, TrendingDown, Syringe } from 'lucide-react';
 
 export type Era = 'ancient' | 'classical' | 'medieval' | 'industrial' | 'modern' | 'digital' | 'future';
 
@@ -27,7 +27,7 @@ export const TIMELINE_DATA: HistoricalEvent[] = [
     description: 'The first spark. Mastery of fire provided warmth, protection, and cooked food, unlocking the caloric intake needed for brain growth.',
     era: 'ancient',
     icon: Flame,
-    color: '#ff5500', // Orange Fire
+    color: '#ff5500', 
     stats: [
       { label: 'Global Pop', value: 0.5, unit: 'm' },
       { label: 'Brain Size', value: 1200, unit: 'cc' },
@@ -41,7 +41,7 @@ export const TIMELINE_DATA: HistoricalEvent[] = [
     description: 'Motion revolutionized. The invention of the wheel facilitated transport, pottery, and simple machines, setting civilization in motion.',
     era: 'ancient',
     icon: CircleIcon,
-    color: '#8B4513', // Wood Brown
+    color: '#8B4513',
     stats: [
       { label: 'Travel Speed', value: 10, unit: 'km/h' },
       { label: 'Trade Range', value: 500, unit: 'km' },
@@ -55,10 +55,24 @@ export const TIMELINE_DATA: HistoricalEvent[] = [
     description: 'History begins. Sumerian Cuneiform allows knowledge to be stored externally, breaking the limits of human memory.',
     era: 'ancient',
     icon: Scroll,
-    color: '#d4af37', // Gold/Clay
+    color: '#d4af37',
     stats: [
       { label: 'Global Pop', value: 30, unit: 'm' },
       { label: 'Literacy', value: 1, unit: '%' },
+    ]
+  },
+  {
+    id: 'blackdeath',
+    year: 1347,
+    yearDisplay: '1347 CE',
+    title: 'The Black Death',
+    description: 'The great reset. A devastating pandemic that wiped out a third of Europe, paradoxically leading to higher wages for survivors and the end of feudalism.',
+    era: 'medieval',
+    icon: Skull,
+    color: '#4a0404', // Blood Red/Dark
+    stats: [
+      { label: 'Europe Pop', value: -33, unit: '%' },
+      { label: 'Wage Growth', value: 100, unit: '%' },
     ]
   },
   {
@@ -69,7 +83,7 @@ export const TIMELINE_DATA: HistoricalEvent[] = [
     description: 'Knowledge democratized. Gutenberg\'s machine crashed the cost of books, fueling the Renaissance and the Scientific Revolution.',
     era: 'medieval',
     icon: BookIcon,
-    color: '#5D4037', // Ink/Leather
+    color: '#5D4037',
     stats: [
       { label: 'Book Cost', value: -90, unit: '%' },
       { label: 'Books', value: 20, unit: 'm' },
@@ -83,7 +97,7 @@ export const TIMELINE_DATA: HistoricalEvent[] = [
     description: 'The Industrial Revolution. We learned to convert heat into motion, replacing muscle with machine and forever changing the skyline.',
     era: 'industrial',
     icon: Pickaxe,
-    color: '#708090', // Steel Grey
+    color: '#708090',
     stats: [
       { label: 'CO2 Levels', value: 280, unit: 'ppm' },
       { label: 'GDP Growth', value: 300, unit: '%' },
@@ -97,7 +111,7 @@ export const TIMELINE_DATA: HistoricalEvent[] = [
     description: 'Banishing the night. Edison\'s bulb extended the human day, illuminating cities and powering the modern 24-hour economy.',
     era: 'industrial',
     icon: Lightbulb,
-    color: '#FFD700', // Electric Yellow
+    color: '#FFD700',
     stats: [
       { label: 'Work Hours', value: 14, unit: 'h' },
       { label: 'Sleep', value: -2, unit: 'h' },
@@ -111,10 +125,24 @@ export const TIMELINE_DATA: HistoricalEvent[] = [
     description: 'Defying gravity. The Wright Brothers proved humans could fly, shrinking the globe and making international travel a reality.',
     era: 'modern',
     icon: Rocket,
-    color: '#87CEEB', // Sky Blue
+    color: '#87CEEB',
     stats: [
       { label: 'Travel Time', value: -95, unit: '%' },
       { label: 'Distance', value: 120, unit: 'ft' },
+    ]
+  },
+  {
+    id: 'ww2',
+    year: 1939,
+    yearDisplay: '1939 CE',
+    title: 'World War II',
+    description: 'The clash of ideologies. A global conflict that spurred rapid advancements in rocketry, atomic energy, and computing, at a terrible human cost.',
+    era: 'modern',
+    icon: Shield,
+    color: '#2F4F4F', // Military Grey/Green
+    stats: [
+      { label: 'Casualties', value: 75, unit: 'm' },
+      { label: 'US Debt', value: 120, unit: '%GDP' },
     ]
   },
   {
@@ -125,7 +153,7 @@ export const TIMELINE_DATA: HistoricalEvent[] = [
     description: 'The giant leap. Humanity set foot on another world, proving that with enough engineering, we can leave our cradle.',
     era: 'modern',
     icon: Globe,
-    color: '#F0F8FF', // Moon White
+    color: '#F0F8FF',
     stats: [
       { label: 'Viewers', value: 600, unit: 'm' },
       { label: 'Computing', value: 0.04, unit: 'MHz' },
@@ -139,10 +167,24 @@ export const TIMELINE_DATA: HistoricalEvent[] = [
     description: 'The digital nervous system. Information became instant and free, connecting billions in a global hive mind.',
     era: 'digital',
     icon: Globe,
-    color: '#00f0ff', // Cyber Blue
+    color: '#00f0ff',
     stats: [
       { label: 'Users', value: 5, unit: 'b' },
       { label: 'Data', value: 175, unit: 'ZB' },
+    ]
+  },
+  {
+    id: 'crash2008',
+    year: 2008,
+    yearDisplay: '2008 CE',
+    title: 'The Great Recession',
+    description: 'System failure. The collapse of the housing bubble triggered a global banking crisis, shattering trust in financial institutions.',
+    era: 'digital',
+    icon: TrendingDown,
+    color: '#ff0000', // Crash Red
+    stats: [
+      { label: 'Lost Wealth', value: 2, unit: '$ Trillion' },
+      { label: 'Unemployment', value: 10, unit: '%' },
     ]
   },
   {
@@ -153,10 +195,24 @@ export const TIMELINE_DATA: HistoricalEvent[] = [
     description: 'Digital Gold. The first successful implementation of decentralized, trustless money, separating state from currency.',
     era: 'digital',
     icon: Bitcoin,
-    color: '#f7931a', // Bitcoin Orange
+    color: '#f7931a',
     stats: [
       { label: 'Price', value: 98000, unit: '$' },
       { label: 'Blocks', value: 850, unit: 'k' },
+    ]
+  },
+  {
+    id: 'covid',
+    year: 2020,
+    yearDisplay: '2020 CE',
+    title: 'COVID-19 Pandemic',
+    description: 'The silent enemy. A global lockdown that accelerated the shift to remote work, mRNA vaccines, and digital life.',
+    era: 'future',
+    icon: Syringe,
+    color: '#00ffaa', // Biohazard Green
+    stats: [
+      { label: 'Lockdown', value: 3.9, unit: 'Billion' },
+      { label: 'Vaccines', value: 13, unit: 'Billion' },
     ]
   },
   {
@@ -167,7 +223,7 @@ export const TIMELINE_DATA: HistoricalEvent[] = [
     description: 'The final invention? We created machines that can think, create, and reason, potentially surpassing human intelligence.',
     era: 'future',
     icon: Cpu,
-    color: '#bf00ff', // Neon Purple
+    color: '#bf00ff',
     stats: [
       { label: 'Parameters', value: 1.8, unit: 'T' },
       { label: 'IQ', value: 120, unit: 'pts' },

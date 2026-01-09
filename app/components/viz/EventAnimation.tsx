@@ -242,6 +242,136 @@ export default function EventAnimation({ id, color }: { id: string; color: strin
             </div>
         );
 
+    case 'blackdeath':
+        return (
+            <div className={containerStyle + " bg-[#1a0505]"}>
+                <div className="relative">
+                    {/* Biohazard Mist */}
+                    <Particles count={20} color="#4a0404" />
+                    
+                    {/* Doctor Mask */}
+                    <motion.div
+                        className="relative z-10"
+                        animate={{ y: [0, -5, 0], rotate: [0, 2, 0] }}
+                        transition={{ duration: 3, repeat: Infinity }}
+                    >
+                        <svg width="100" height="120" viewBox="0 0 100 120" fill="none" stroke="white" strokeWidth="2">
+                            {/* Beak */}
+                            <path d="M50 40 L90 70 L60 80 L50 90 L40 80 L10 70 Z" fill="#111" />
+                            {/* Goggles */}
+                            <circle cx="35" cy="50" r="10" fill="#000" stroke="#555" />
+                            <circle cx="65" cy="50" r="10" fill="#000" stroke="#555" />
+                            {/* Hat */}
+                            <path d="M20 30 L80 30 L70 10 L30 10 Z" fill="#111" />
+                            <rect x="10" y="30" width="80" height="5" fill="#111" />
+                        </svg>
+                    </motion.div>
+                </div>
+            </div>
+        );
+
+    case 'ww2':
+        return (
+            <div className={containerStyle + " bg-[#1c2e2e]"}>
+                <div className="relative w-full h-full flex items-center justify-center">
+                    {/* Radar Sweep */}
+                    <div className="absolute w-64 h-64 border border-green-500/30 rounded-full flex items-center justify-center bg-[#0a1a1a]">
+                        <motion.div 
+                            className="w-1/2 h-1/2 bg-gradient-to-r from-transparent to-green-500/50 absolute top-0 left-0 origin-bottom-right"
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                            style={{ borderBottomRightRadius: '100%' }}
+                        />
+                        {/* Blips */}
+                        <motion.div 
+                            className="absolute w-2 h-2 bg-red-500 rounded-full top-10 left-20" 
+                            animate={{ opacity: [0, 1, 0] }}
+                            transition={{ duration: 4, repeat: Infinity, delay: 0.5 }}
+                        />
+                        <motion.div 
+                            className="absolute w-2 h-2 bg-red-500 rounded-full bottom-16 right-12" 
+                            animate={{ opacity: [0, 1, 0] }}
+                            transition={{ duration: 4, repeat: Infinity, delay: 2.5 }}
+                        />
+                    </div>
+                    {/* Tank Icon Outline */}
+                    <svg width="80" height="60" viewBox="0 0 100 60" fill="none" stroke="#4a5a5a" strokeWidth="2" className="z-10">
+                        <path d="M10 40 L90 40 L80 20 L20 20 Z" fill="#2F4F4F" />
+                        <path d="M50 20 L50 10 L100 10" strokeWidth="4" />
+                        <circle cx="20" cy="50" r="8" fill="#111" />
+                        <circle cx="40" cy="50" r="8" fill="#111" />
+                        <circle cx="60" cy="50" r="8" fill="#111" />
+                        <circle cx="80" cy="50" r="8" fill="#111" />
+                    </svg>
+                </div>
+            </div>
+        );
+
+    case 'crash2008':
+        return (
+            <div className={containerStyle + " bg-[#1a0000]"}>
+                <div className="relative w-full h-full flex flex-col items-center justify-end pb-10">
+                    {/* Chart Line */}
+                    <svg width="200" height="100" viewBox="0 0 200 100" className="z-10">
+                        <motion.path 
+                            d="M0 80 L40 60 L80 70 L120 20 L160 90 L200 100" 
+                            fill="none" 
+                            stroke="red" 
+                            strokeWidth="3"
+                            initial={{ pathLength: 0 }}
+                            animate={{ pathLength: 1 }}
+                            transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
+                        />
+                    </svg>
+                    {/* Falling Money */}
+                    <div className="absolute inset-0 overflow-hidden">
+                        {[...Array(10)].map((_, i) => (
+                            <motion.div
+                                key={i}
+                                className="absolute text-green-500 text-lg opacity-50"
+                                initial={{ y: -20, x: Math.random() * 200 }}
+                                animate={{ y: 200, rotate: 180 }}
+                                transition={{ duration: 2, delay: i * 0.2, repeat: Infinity, ease: "linear" }}
+                            >
+                                $
+                            </motion.div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        );
+
+    case 'covid':
+        return (
+            <div className={containerStyle + " bg-[#001a10]"}>
+                <div className="relative">
+                    {/* Virus */}
+                    <motion.div
+                        className="w-24 h-24 bg-green-900 rounded-full relative flex items-center justify-center shadow-[0_0_30px_#00ffaa]"
+                        animate={{ rotate: 360, scale: [1, 1.1, 1] }}
+                        transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                    >
+                        {/* Spikes */}
+                        {[...Array(8)].map((_, i) => (
+                            <div 
+                                key={i} 
+                                className="absolute w-4 h-8 bg-green-600 rounded-full -z-10"
+                                style={{ transform: `rotate(${i * 45}deg) translateY(-20px)` }} 
+                            />
+                        ))}
+                        <div className="w-20 h-20 bg-green-800 rounded-full opacity-80" />
+                    </motion.div>
+                    
+                    {/* Shield/Mask Protection Layer */}
+                    <motion.div 
+                        className="absolute inset-[-20px] border-4 border-blue-400 rounded-full opacity-0"
+                        animate={{ opacity: [0, 0.5, 0], scale: [1.2, 1.4, 1.2] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                    />
+                </div>
+            </div>
+        );
+
     case 'lightbulb':
         return (
             <div className={containerStyle + " bg-black"}>
