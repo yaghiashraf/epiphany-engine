@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 const HF_TOKEN = process.env.HF_TOKEN;
-const MODEL = "mistralai/Mistral-7B-Instruct-v0.3"; // High quality, fast
+const MODEL = "HuggingFaceH4/zephyr-7b-beta"; // Reliable, free-tier friendly
 
 export async function POST(req: Request) {
   try {
