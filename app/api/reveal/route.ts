@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { HfInference } from '@huggingface/inference';
+import { jsonrepair } from 'jsonrepair';
 
 const HF_TOKEN = process.env.HF_TOKEN;
 const MODEL = "meta-llama/Llama-3.2-3B-Instruct"; // Lightweight, fast, reliable
@@ -32,7 +33,7 @@ export async function POST(req: Request) {
       "nodes": [
         { "id": "new_node_id", "parentId": "root", "label": "Title", "type": "${action === 'deepen' ? 'fractal' : 'insight'}", "text": "Insight..." }
       ],
-      "narrative": "## New Section Title\\n\\nContent..."
+      "narrative": "## New Section Title\n\nContent..."
     }`;
     } else {
         structureInstruction = `
@@ -43,7 +44,7 @@ export async function POST(req: Request) {
         { "id": "n1", "parentId": "root", "label": "Title", "type": "challenge", "text": "Insight..." },
         { "id": "n2", "parentId": "root", "label": "Title", "type": "resolution", "text": "Insight..." }
       ],
-      "narrative": "## Title\\n\\nContent..."
+      "narrative": "## Title\n\nContent..."
     }`;
     }
 
@@ -98,19 +99,13 @@ export async function POST(req: Request) {
     if (firstBrace !== -1 && lastBrace !== -1) {
         text = text.substring(firstBrace, lastBrace + 1);
         try {
-            const json = JSON.parse(text);
+            // Use jsonrepair instead of JSON.parse directly
+            const repaired = jsonrepair(text);
+            const json = JSON.parse(repaired);
             return NextResponse.json(json);
-        } catch (e) {
-             // If standard parse fails, try a "dirty" fix for common unescaped newlines in narrative
-             try {
-                // Remove newlines inside strings might be too aggressive, 
-                // but let's try to escape unescaped double quotes inside value strings if possible.
-                // For now, simpler error is safer.
-                console.error("JSON Parse Failed:", text);
-                throw new Error("AI output malformed JSON. Please try again.");
-             } catch (e2) {
-                 throw e;
-             }
+        } catch (e: any) {
+             console.error("JSON Repair Failed:", text);
+             return NextResponse.json({ error: `JSON Error: ${e.message}` }, { status: 500 });
         }
     } else {
         return NextResponse.json({
