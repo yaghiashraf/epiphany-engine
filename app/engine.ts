@@ -54,23 +54,19 @@ export class LLMEngine {
 
   private localFallback(query: string, ageStr: string, sex: string): EpiphanySession {
       const age = parseInt(ageStr) || 30;
-      let insight = "The universe is silent (Add HF_TOKEN to Netlify).";
+      let insight = "AI Model is warming up... please try again in 30 seconds.";
+      let detail = "The advanced AI model on Hugging Face is currently loading. This happens on the first request after a period of inactivity.";
       
-      if (age < 25) insight = "You are building a foundation on moving ground.";
-      else if (age < 40) insight = "You are mistaking the map for the territory.";
-      else insight = "You are carrying luggage for a trip you already finished.";
-
       return {
           id: crypto.randomUUID(),
           query,
           age: ageStr,
           sex,
           nodes: [
-              { id: "root", label: "Local Insight", type: "core", text: insight },
-              { id: "n1", parentId: "root", label: "Setup Needed", type: "challenge", text: "Please configure HF_TOKEN in your Netlify Environment Variables." }
+              { id: "root", label: "System Warming Up", type: "core", text: "The Neural Lattice is calibrating." },
+              { id: "n1", parentId: "root", label: "Status", type: "challenge", text: "Model Loading or Token Issue" }
           ],
-          narrative: `## Local Mode Active\n\n${insight}\n\n### Setup Required\n\nTo unleash the full power of the AI, please add your Hugging Face Token to Netlify Environment Variables as 
-HF_TOKEN.`, 
+          narrative: `## Connection Status\n\n${detail}\n\n### Troubleshooting\n\n1. If you just added the key, please **wait 1 minute** and refresh.\n2. If this persists, verify your **HF_TOKEN** in Netlify settings.\n3. Try clicking "Reveal Truth" again shortly.`,
           iteration: 0
       };
   }
