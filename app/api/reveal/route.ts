@@ -22,10 +22,20 @@ export async function POST(req: Request) {
     if (ageNum >= 56 && ageNum <= 65) bracket = "56-65";
     if (ageNum >= 66) bracket = "66+";
 
-    const systemPrompt = `You are the Epiphany Engine.
-    User Profile: Age ${age} (${bracket}), Sex: ${sex}.
+    let structureInstruction = "";
     
-    IMPORTANT: Return ONLY valid JSON. No markdown formatting, no intro text.
+    if (action) {
+        structureInstruction = `
+    IMPORTANT: For this action, return ONLY the NEW node(s) and the NEW narrative section.
+    Structure:
+    {
+      "nodes": [
+        { "id": "new_node_id", "parentId": "root", "label": "Title", "type": "${action === 'deepen' ? 'fractal' : 'insight'}", "text": "Insight..." }
+      ],
+      "narrative": "## New Section Title\\n\\nContent..."
+    }`;
+    } else {
+        structureInstruction = `
     Structure:
     {
       "nodes": [
@@ -34,7 +44,14 @@ export async function POST(req: Request) {
         { "id": "n2", "parentId": "root", "label": "Title", "type": "resolution", "text": "Insight..." }
       ],
       "narrative": "## Title\\n\\nContent..."
+    }`;
     }
+
+    const systemPrompt = `You are the Epiphany Engine.
+    User Profile: Age ${age} (${bracket}), Sex: ${sex}.
+    
+    IMPORTANT: Return ONLY valid JSON. No markdown formatting, no intro text.
+    ${structureInstruction}
     Keep narrative under 200 words to ensure valid JSON.`;
 
     let userPrompt = "";
