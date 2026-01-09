@@ -51,8 +51,8 @@ export const TIMELINE_DATA: HistoricalEvent[] = [
     id: 'writing',
     year: -3200,
     yearDisplay: '3200 BCE',
-    title: 'Invention of Writing',
-    description: 'History begins. Sumerian Cuneiform allows knowledge to be stored externally, breaking the limits of human memory.',
+    title: 'Information Dissemination',
+    description: 'The externalization of memory. Writing allowed knowledge to travel across time and space, independent of the messenger.',
     era: 'ancient',
     icon: Scroll,
     color: '#d4af37',
@@ -69,7 +69,7 @@ export const TIMELINE_DATA: HistoricalEvent[] = [
     description: 'The great reset. A devastating pandemic that wiped out a third of Europe, paradoxically leading to higher wages for survivors and the end of feudalism.',
     era: 'medieval',
     icon: Skull,
-    color: '#4a0404', // Blood Red/Dark
+    color: '#4a0404',
     stats: [
       { label: 'Europe Pop', value: -33, unit: '%' },
       { label: 'Wage Growth', value: 100, unit: '%' },
@@ -79,8 +79,8 @@ export const TIMELINE_DATA: HistoricalEvent[] = [
     id: 'printing',
     year: 1440,
     yearDisplay: '1440 CE',
-    title: 'The Printing Press',
-    description: 'Knowledge democratized. Gutenberg\'s machine crashed the cost of books, fueling the Renaissance and the Scientific Revolution.',
+    title: 'Mass Communication',
+    description: 'The Printing Press democratized knowledge. Information could now be replicated cheaply, fueling the Renaissance and Scientific Revolution.',
     era: 'medieval',
     icon: BookIcon,
     color: '#5D4037',
@@ -135,11 +135,11 @@ export const TIMELINE_DATA: HistoricalEvent[] = [
     id: 'ww2',
     year: 1939,
     yearDisplay: '1939 CE',
-    title: 'World War II',
-    description: 'The clash of ideologies. A global conflict that spurred rapid advancements in rocketry, atomic energy, and computing, at a terrible human cost.',
+    title: 'Global Conflict',
+    description: 'The industrialization of war. World War II reshaped geopolitics and spurred atomic energy and computing, at a terrible human cost.',
     era: 'modern',
     icon: Shield,
-    color: '#2F4F4F', // Military Grey/Green
+    color: '#2F4F4F',
     stats: [
       { label: 'Casualties', value: 75, unit: 'm' },
       { label: 'US Debt', value: 120, unit: '%GDP' },
@@ -181,7 +181,7 @@ export const TIMELINE_DATA: HistoricalEvent[] = [
     description: 'System failure. The collapse of the housing bubble triggered a global banking crisis, shattering trust in financial institutions.',
     era: 'digital',
     icon: TrendingDown,
-    color: '#ff0000', // Crash Red
+    color: '#ff0000',
     stats: [
       { label: 'Lost Wealth', value: 2, unit: '$ Trillion' },
       { label: 'Unemployment', value: 10, unit: '%' },
@@ -209,7 +209,7 @@ export const TIMELINE_DATA: HistoricalEvent[] = [
     description: 'The silent enemy. A global lockdown that accelerated the shift to remote work, mRNA vaccines, and digital life.',
     era: 'future',
     icon: Syringe,
-    color: '#00ffaa', // Biohazard Green
+    color: '#00ffaa',
     stats: [
       { label: 'Lockdown', value: 3.9, unit: 'Billion' },
       { label: 'Vaccines', value: 13, unit: 'Billion' },

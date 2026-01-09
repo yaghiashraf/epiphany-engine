@@ -1,8 +1,8 @@
 'use client';
 
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Environment, Float, Stars, Sparkles, Torus, Sphere, Box, Cylinder, Icosahedron } from '@react-three/drei';
-import { useRef, useMemo, useState } from 'react';
+import { OrbitControls, Environment, Float, Stars, Sparkles, Torus, Sphere, Box, Cylinder, Icosahedron, Text } from '@react-three/drei';
+import { useRef, useMemo } from 'react';
 import * as THREE from 'three';
 
 // --- SCENE COMPONENTS ---
@@ -22,7 +22,6 @@ function FireScene() {
 
   return (
     <group ref={group}>
-      {/* Emissive Crystals representing flames */}
       {[...Array(8)].map((_, i) => (
         <mesh key={i} position={[Math.random()*2-1, 0, Math.random()*2-1]} rotation={[Math.random(), Math.random(), Math.random()]}>
           <octahedronGeometry args={[0.8, 0]} />
@@ -53,7 +52,6 @@ function WheelScene() {
         <cylinderGeometry args={[0.3, 0.3, 3, 16]} />
         <meshStandardMaterial color="#8d6e63" />
       </mesh>
-      {/* Spokes */}
       {[0, 1, 2, 3].map(i => (
           <mesh key={i} rotation={[0, (i * Math.PI) / 2, 0]}>
               <boxGeometry args={[0.2, 4.8, 0.2]} />
@@ -64,57 +62,64 @@ function WheelScene() {
   );
 }
 
+// Updated: Information Dissemination (Abstract Flow)
 function WritingScene() {
-    return (
-        <group>
-            {/* Scroll */}
-            <mesh rotation={[0.2, 0, 0]} position={[0, 0, 0]}>
-                <boxGeometry args={[3, 4, 0.1]} />
-                <meshStandardMaterial color="#e0c9a6" roughness={0.9} />
-            </mesh>
-            {/* Quill */}
-            <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
-                <group position={[1, 1, 1]} rotation={[0, 0, -Math.PI/4]}>
-                    <mesh position={[0, -1, 0]}>
-                        <cylinderGeometry args={[0.05, 0.02, 3]} />
-                        <meshStandardMaterial color="#fff" />
-                    </mesh>
-                    <mesh position={[0, 0.5, 0]} scale={[1, 2, 0.1]}>
-                        <sphereGeometry args={[0.5]} />
-                        <meshStandardMaterial color="#fff" />
-                    </mesh>
-                </group>
-            </Float>
-        </group>
-    );
-}
+    const particles = useMemo(() => {
+        return [...Array(20)].map(() => ({
+            pos: [Math.random()*4-2, Math.random()*4-2, Math.random()*4-2],
+            scale: Math.random() * 0.5 + 0.5
+        }));
+    }, []);
 
-function PrintingScene() {
-    const stampRef = useRef<THREE.Group>(null);
     useFrame((state) => {
-        if(stampRef.current) {
-            stampRef.current.position.y = 1 + Math.sin(state.clock.getElapsedTime() * 3);
-        }
+       const t = state.clock.getElapsedTime();
+       // Add gentle wave motion to "thought particles"
     });
 
     return (
         <group>
-            {/* Base */}
-            <mesh position={[0, -2, 0]}>
-                <boxGeometry args={[4, 0.5, 4]} />
-                <meshStandardMaterial color="#333" metalness={0.8} roughness={0.2} />
+            <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
+                {particles.map((p, i) => (
+                    <mesh key={i} position={p.pos as any} scale={p.scale}>
+                        <boxGeometry args={[0.2, 0.3, 0.05]} /> {/* Tablet/Glyph shape */}
+                        <meshStandardMaterial color="#e0c9a6" emissive="#d4af37" emissiveIntensity={0.5} />
+                    </mesh>
+                ))}
+            </Float>
+            <Sparkles count={30} scale={5} color="#d4af37" size={2} opacity={0.5} />
+        </group>
+    );
+}
+
+// Updated: Mass Communication (Replication)
+function PrintingScene() {
+    const groupRef = useRef<THREE.Group>(null);
+    useFrame((state) => {
+        if(groupRef.current) {
+            groupRef.current.rotation.y = state.clock.getElapsedTime() * 0.2;
+        }
+    });
+
+    return (
+        <group ref={groupRef}>
+            {/* Central Source */}
+            <mesh position={[0, 0, 0]}>
+                <boxGeometry args={[1, 1.5, 1]} />
+                <meshStandardMaterial color="#555" metalness={0.8} />
             </mesh>
-            {/* Stamp */}
-            <group ref={stampRef}>
-                <mesh position={[0, 0, 0]}>
-                    <boxGeometry args={[2, 1, 2]} />
-                    <meshStandardMaterial color="#555" metalness={0.6} />
-                </mesh>
-                <mesh position={[0, 1, 0]}>
-                    <cylinderGeometry args={[0.2, 0.2, 2]} />
-                    <meshStandardMaterial color="#888" />
-                </mesh>
-            </group>
+            
+            {/* Expanding Circle of Pages */}
+            {[...Array(12)].map((_, i) => {
+                const angle = (i / 12) * Math.PI * 2;
+                return (
+                    <Float key={i} speed={2} rotationIntensity={1} floatIntensity={1}>
+                        <mesh position={[Math.cos(angle)*3, Math.sin(angle)*0.5, Math.sin(angle)*3]} rotation={[0, -angle, 0]}>
+                            <boxGeometry args={[0.8, 1.2, 0.05]} />
+                            <meshStandardMaterial color="white" />
+                        </mesh>
+                    </Float>
+                );
+            })}
         </group>
     );
 }
@@ -129,12 +134,10 @@ function SteamScene() {
 
     return (
         <group>
-            {/* Cylinder Housing */}
             <mesh>
                 <cylinderGeometry args={[1.2, 1.2, 4, 32]} />
                 <meshStandardMaterial color="#444" metalness={0.8} roughness={0.2} opacity={0.5} transparent />
             </mesh>
-            {/* Piston */}
             <mesh ref={pistonRef}>
                 <cylinderGeometry args={[1, 1, 0.5, 32]} />
                 <meshStandardMaterial color="#aaa" metalness={0.9} roughness={0.1} />
@@ -146,22 +149,19 @@ function SteamScene() {
 function LightbulbScene() {
     return (
         <group>
-            {/* Glass Bulb */}
             <mesh>
                 <sphereGeometry args={[1.5, 32, 32]} />
                 <meshPhysicalMaterial 
                     roughness={0} 
                     transmission={1} 
-                    thickness={0.5} // glass thickness
+                    thickness={0.5} 
                     color="white"
                 />
             </mesh>
-            {/* Filament */}
             <mesh>
                 <torusGeometry args={[0.5, 0.05, 16, 100]} />
                 <meshStandardMaterial color="#ffaa00" emissive="#ffaa00" emissiveIntensity={5} toneMapped={false} />
             </mesh>
-            {/* Base */}
             <mesh position={[0, -1.8, 0]}>
                 <cylinderGeometry args={[0.6, 0.6, 1, 32]} />
                 <meshStandardMaterial color="#333" metalness={1} roughness={0.3} />
@@ -175,17 +175,14 @@ function FlightScene() {
     return (
         <Float speed={2} rotationIntensity={0.5} floatIntensity={1}>
             <group>
-                {/* Body */}
                 <mesh rotation={[0, 0, Math.PI/2]} position={[0, 0, 0]}>
                     <cylinderGeometry args={[0.3, 0.3, 4, 16]} />
                     <meshStandardMaterial color="#fff" />
                 </mesh>
-                {/* Wings */}
                 <mesh position={[0, 0, 0]} scale={[4, 0.1, 1]}>
                     <boxGeometry />
                     <meshStandardMaterial color="#eee" />
                 </mesh>
-                {/* Tail */}
                 <mesh position={[-1.8, 0.5, 0]} scale={[0.8, 1, 0.1]}>
                     <boxGeometry />
                     <meshStandardMaterial color="#eee" />
@@ -202,7 +199,6 @@ function BlackDeathScene() {
                 <meshStandardMaterial color="#220000" roughness={0.9} />
             </Sphere>
             <Sparkles count={50} color="#ff0000" scale={4} opacity={0.5} />
-            {/* Spikes */}
             {[...Array(20)].map((_, i) => (
                 <mesh key={i} rotation={[Math.random()*Math.PI, Math.random()*Math.PI, 0]} position={[0,0,0]}>
                     <cylinderGeometry args={[0.05, 0.02, 3.5]} />
@@ -213,26 +209,21 @@ function BlackDeathScene() {
     );
 }
 
+// Updated: Global Conflict (Abstract Globe Impact)
 function WW2Scene() {
     return (
         <group>
-            {/* Tank Turret */}
-            <mesh>
-                <boxGeometry args={[2, 1, 2]} />
-                <meshStandardMaterial color="#2F4F4F" roughness={0.8} />
-            </mesh>
-            {/* Barrel */}
-            <mesh position={[1.5, 0, 0]} rotation={[0, 0, -Math.PI/2]}>
-                <cylinderGeometry args={[0.2, 0.2, 3]} />
-                <meshStandardMaterial color="#1a2a2a" />
-            </mesh>
-            <Float speed={1} rotationIntensity={0.2} floatIntensity={0}>
-                {/* Radar Dish */}
-                <mesh position={[0, 1, 0]} rotation={[0.5, 0, 0]}>
-                    <cylinderGeometry args={[1, 0.1, 0.2]} />
-                    <meshStandardMaterial color="#333" metalness={0.8} />
+            <Sphere args={[2, 32, 32]}>
+                <meshStandardMaterial color="#1a2a2a" roughness={0.8} />
+            </Sphere>
+            {/* Impact Zones */}
+            {[...Array(6)].map((_, i) => (
+                <mesh key={i} position={[Math.random()*2-1, Math.random()*2-1, 2]} scale={[0.2, 0.2, 0.2]}>
+                    <sphereGeometry />
+                    <meshStandardMaterial color="red" emissive="red" emissiveIntensity={2} />
                 </mesh>
-            </Float>
+            ))}
+            <Sparkles count={30} color="red" scale={3} size={2} />
         </group>
     );
 }
@@ -241,11 +232,7 @@ function MoonScene() {
     return (
         <group>
             <Sphere args={[2, 64, 64]}>
-                <meshStandardMaterial 
-                    color="#cccccc" 
-                    roughness={0.9} 
-                    bumpScale={0.1}
-                />
+                <meshStandardMaterial color="#cccccc" roughness={0.9} bumpScale={0.1} />
             </Sphere>
             <Float speed={1} rotationIntensity={0.5} floatIntensity={0.5}>
                 <group position={[2.5, 1, 0]} rotation={[0, 0, 0.5]}>
@@ -265,7 +252,6 @@ function MoonScene() {
 }
 
 function InternetScene() {
-    // Network of nodes
     const nodes = useMemo(() => {
         return [...Array(15)].map(() => ({
             pos: [Math.random()*4-2, Math.random()*4-2, Math.random()*4-2] as [number, number, number]
@@ -280,7 +266,6 @@ function InternetScene() {
                     <meshStandardMaterial color="#00f0ff" emissive="#00f0ff" emissiveIntensity={2} />
                 </mesh>
             ))}
-            {/* Lines would require BufferGeometry, skipping for simpler visual density using visual tricks */}
             <Sparkles count={100} scale={5} color="#00f0ff" size={2} speed={1} />
             <Sphere args={[1, 16, 16]} scale={[0.1, 0.1, 0.1]}>
                  <meshStandardMaterial color="white" />
@@ -292,7 +277,6 @@ function InternetScene() {
 function CrashScene() {
     return (
         <group>
-            {/* Downward Arrow 3D */}
             <group rotation={[0, 0, -Math.PI/4]}>
                 <mesh position={[0, 1, 0]}>
                     <boxGeometry args={[0.5, 4, 0.5]} />
@@ -303,7 +287,6 @@ function CrashScene() {
                     <meshStandardMaterial color="red" />
                 </mesh>
             </group>
-            {/* Coins */}
             {[...Array(5)].map((_, i) => (
                 <Float key={i} speed={3} rotationIntensity={2} floatIntensity={2}>
                     <mesh position={[Math.random()*4-2, Math.random()*4-2, Math.random()*2]}>
@@ -324,7 +307,6 @@ function CryptoScene() {
                 <meshStandardMaterial color="#f7931a" metalness={0.8} roughness={0.2} />
             </group>
             <mesh position={[0, 0, 0.15]}>
-                {/* Abstract 'B' shape represented by Torus segments or simple boxes */}
                 <boxGeometry args={[1, 2.5, 0.1]} />
                 <meshStandardMaterial color="#fff" />
             </mesh>
@@ -339,7 +321,6 @@ function CovidScene() {
                 <icosahedronGeometry args={[1.5, 1]} />
                 <meshStandardMaterial color="#00ff88" roughness={0.5} />
             </mesh>
-            {/* Spikes */}
             {[...Array(20)].map((_, i) => (
                 <mesh key={i} rotation={[Math.random()*Math.PI, Math.random()*Math.PI, 0]} position={[0,0,0]}>
                     <cylinderGeometry args={[0.1, 0.1, 3.8]} />
@@ -353,7 +334,6 @@ function CovidScene() {
 function AIScene() {
     return (
         <group>
-            {/* Brain-like structure using Icosahedron with wireframe */}
             <Float speed={2} rotationIntensity={0.5}>
                 <mesh>
                     <icosahedronGeometry args={[1.8, 2]} />
@@ -396,13 +376,14 @@ export default function EventAnimation({ id, color }: { id: string; color: strin
 
   return (
     <div className="w-full h-full">
-        <Canvas camera={{ position: [0, 0, 5], fov: 45 }}>
+        {/* Adjusted camera Z for zoom-out context */}
+        <Canvas camera={{ position: [0, 0, 8], fov: 40 }}>
             <ambientLight intensity={0.5} />
             <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
             <pointLight position={[-10, -10, -10]} intensity={0.5} color={color} />
             
             <Environment preset="city" />
-            <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={1} />
+            <OrbitControls enableZoom={true} autoRotate autoRotateSpeed={1} />
             
             {getScene()}
         </Canvas>
