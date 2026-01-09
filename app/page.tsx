@@ -64,31 +64,33 @@ export default function Home() {
               className="flex-1 flex flex-col items-center justify-center"
             >
               <div className="w-full max-w-2xl bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-3xl shadow-2xl relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                 
-                <label className="block text-lg text-cyan-100 mb-4 font-light">
-                  What is weighing on your mind?
-                </label>
-                <textarea
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder="e.g., 'I feel stuck in my career', 'Why do I fear failure?'"
-                  className="w-full h-40 bg-black/40 border border-white/10 rounded-xl p-4 text-white placeholder-white/30 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all resize-none mb-6 text-lg"
-                />
-                
-                <div className="flex justify-end">
-                  <button
-                    onClick={handleReveal}
-                    disabled={loading || !query}
-                    className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full text-white font-bold text-lg hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(0,240,255,0.3)] hover:shadow-[0_0_30px_rgba(191,0,255,0.5)]"
-                  >
-                    {loading ? (
-                      <RefreshCw className="w-6 h-6 animate-spin" />
-                    ) : (
-                      <Sparkles className="w-6 h-6" />
-                    )}
-                    {loading ? 'Consulting Lattice...' : 'Reveal Truth'}
-                  </button>
+                <div className="relative z-10">
+                  <label className="block text-lg text-cyan-100 mb-4 font-light">
+                    What is weighing on your mind?
+                  </label>
+                  <textarea
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="e.g., 'I feel stuck in my career', 'Why do I fear failure?'"
+                    className="w-full h-40 bg-black/40 border border-white/10 rounded-xl p-4 text-white placeholder-white/30 focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all resize-none mb-6 text-lg"
+                  />
+                  
+                  <div className="flex justify-end">
+                    <button
+                      onClick={handleReveal}
+                      disabled={loading || !query}
+                      className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full text-white font-bold text-lg hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(0,240,255,0.3)] hover:shadow-[0_0_30px_rgba(191,0,255,0.5)]"
+                    >
+                      {loading ? (
+                        <RefreshCw className="w-6 h-6 animate-spin" />
+                      ) : (
+                        <Sparkles className="w-6 h-6" />
+                      )}
+                      {loading ? 'Consulting Lattice...' : 'Reveal Truth'}
+                    </button>
+                  </div>
                 </div>
               </div>
             </motion.section>
