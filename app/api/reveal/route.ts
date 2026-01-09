@@ -5,6 +5,11 @@ const MODEL = "mistralai/Mistral-7B-Instruct-v0.3"; // High quality, fast
 
 export async function POST(req: Request) {
   try {
+    if (!HF_TOKEN) {
+        console.error("HF_TOKEN is missing on server.");
+        return NextResponse.json({ error: "Missing HF_TOKEN" }, { status: 401 });
+    }
+
     const { query, age, sex, action, previousNarrative } = await req.json();
     const ageNum = parseInt(age);
 
@@ -49,27 +54,42 @@ export async function POST(req: Request) {
         Narrative should be 3 paragraphs, formatted with Markdown headers.`;
     }
 
-    // Call Hugging Face
-    const response = await fetch(`https://api-inference.huggingface.co/models/${MODEL}`, {
-        headers: {
-            Authorization: `Bearer ${HF_TOKEN}`,
-            "Content-Type": "application/json",
-        },
-        method: "POST",
-        body: JSON.stringify({
-            inputs: `<s>[INST] ${systemPrompt} 
+    // Function to call HF with retry logic for 503 (Model Loading)
+    const callHF = async (retries = 3): Promise<Response> => {
+        const response = await fetch(`https://api-inference.huggingface.co/models/${MODEL}`, {
+            headers: {
+                Authorization: `Bearer ${HF_TOKEN}`,
+                "Content-Type": "application/json",
+            },
+            method: "POST",
+            body: JSON.stringify({
+                inputs: `<s>[INST] ${systemPrompt} 
 
- ${userPrompt} [/INST]`, 
-            parameters: {
-                max_new_tokens: 1024,
-                temperature: 0.7,
-                return_full_text: false,
-            }
-        }),
-    });
+ ${userPrompt} [/INST]`,
+                parameters: {
+                    max_new_tokens: 1024,
+                    temperature: 0.7,
+                    return_full_text: false,
+                }
+            }),
+        });
+
+        if (response.status === 503 && retries > 0) {
+            const data = await response.json();
+            const waitTime = data.estimated_time || 20;
+            console.log(`Model loading... waiting ${waitTime}s`);
+            await new Promise(r => setTimeout(r, waitTime * 1000));
+            return callHF(retries - 1);
+        }
+
+        return response;
+    };
+
+    const response = await callHF();
 
     if (!response.ok) {
-        throw new Error(`HF API Error: ${response.statusText}`);
+        const errText = await response.text();
+        throw new Error(`HF API Error: ${response.status} ${errText}`);
     }
 
     const result = await response.json();
@@ -91,7 +111,7 @@ export async function POST(req: Request) {
     }
 
   } catch (error) {
-    console.error(error);
+    console.error("API Route Error:", error);
     return NextResponse.json({ error: "Failed to generate epiphany" }, { status: 500 });
   }
 }
