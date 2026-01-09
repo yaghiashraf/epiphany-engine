@@ -97,14 +97,28 @@ export default function Home() {
                   {/* Demographics Row */}
                   <div className="flex gap-4">
                     <div className="flex-1">
-                        <label className="block text-xs text-cyan-200 uppercase tracking-wider mb-2">Age</label>
+                        <label className="block text-xs text-cyan-200 uppercase tracking-wider mb-2">Age (18+)</label>
                         <input 
                             type="number" 
+                            min="18"
+                            max="120"
                             value={age}
-                            onChange={(e) => setAge(e.target.value)}
-                            placeholder="30"
-                            className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 transition-all"
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                if (val === '' || (parseInt(val) >= 0 && val.length <= 3)) {
+                                    setAge(val);
+                                }
+                            }}
+                            placeholder="e.g. 28"
+                            className={`w-full bg-black/40 border rounded-xl p-3 text-white focus:outline-none focus:ring-1 transition-all ${
+                                age && parseInt(age) < 18 
+                                ? 'border-red-500 focus:border-red-500 focus:ring-red-500' 
+                                : 'border-white/10 focus:border-cyan-400 focus:ring-cyan-400'
+                            }`}
                         />
+                        {age && parseInt(age) < 18 && (
+                            <span className="text-red-400 text-xs mt-1 block">Must be 18 or older to consult the lattice.</span>
+                        )}
                     </div>
                     <div className="flex-1">
                         <label className="block text-xs text-cyan-200 uppercase tracking-wider mb-2">Sex</label>
@@ -135,7 +149,7 @@ export default function Home() {
                   <div className="flex justify-end">
                     <button
                       onClick={handleReveal}
-                      disabled={loading || !query || !age}
+                      disabled={loading || !query || !age || parseInt(age) < 18}
                       className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full text-white font-bold text-lg hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(0,240,255,0.3)] hover:shadow-[0_0_30px_rgba(191,0,255,0.5)]"
                     >
                       {loading ? (
