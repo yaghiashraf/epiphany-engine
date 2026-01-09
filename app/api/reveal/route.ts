@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { HfInference } from '@huggingface/inference';
 
 const HF_TOKEN = process.env.HF_TOKEN;
-const MODEL = "HuggingFaceH4/zephyr-7b-beta";
+const MODEL = "meta-llama/Llama-3.2-3B-Instruct"; // Lightweight, fast, reliable
 
 export async function POST(req: Request) {
   try {
