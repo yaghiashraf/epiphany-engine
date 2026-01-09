@@ -1,4 +1,4 @@
-import { LatticeNode, EpiphanySession } from './engine';
+import type { LatticeNode, EpiphanySession } from './types';
 
 export class LLMEngine {
   async generateLattice(query: string, ageStr: string, sex: string): Promise<EpiphanySession> {
@@ -10,7 +10,6 @@ export class LLMEngine {
     
     const data = await res.json();
     
-    // Fallback for demo if API fails/no token
     if (data.error || !data.nodes) {
         console.warn("Using Local Fallback due to API error:", data.error);
         return this.localFallback(query, ageStr, sex);
@@ -42,7 +41,6 @@ export class LLMEngine {
 
     const data = await res.json();
     
-    // Merge new nodes/narrative
     const newNodes = [...currentSession.nodes, ...data.nodes];
     const newNarrative = currentSession.narrative + "\n\n" + data.narrative;
 
@@ -77,5 +75,3 @@ HF_TOKEN.`,
       };
   }
 }
-
-export type { LatticeNode, EpiphanySession };

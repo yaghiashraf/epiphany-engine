@@ -3,7 +3,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, ArrowRight, Brain, RefreshCw, Zap, ShieldAlert } from 'lucide-react';
-import { LLMEngine, EpiphanySession } from '@/app/engine';
+import { LLMEngine } from '@/app/engine';
+import { EpiphanySession } from '@/app/types';
 import Lattice from '@/components/Lattice';
 
 export default function Home() {

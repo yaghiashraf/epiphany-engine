@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { LatticeNode } from '@/app/engine';
+import { LatticeNode } from '@/app/types';
 
 interface LatticeProps {
   nodes: LatticeNode[];
