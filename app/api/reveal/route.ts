@@ -22,19 +22,20 @@ export async function POST(req: Request) {
     if (ageNum >= 56 && ageNum <= 65) bracket = "56-65";
     if (ageNum >= 66) bracket = "66+";
 
-    const systemPrompt = `You are the Epiphany Engine, a philosophical AI that constructs "Revelation Lattices" to help users break through life constraints. 
-    You speak with profound, slightly mystical, but highly psychological authority.
-    User Profile: Age ${age} (${bracket} bracket), Sex: ${sex}.
+    const systemPrompt = `You are the Epiphany Engine.
+    User Profile: Age ${age} (${bracket}), Sex: ${sex}.
     
-    Output JSON ONLY. Structure:
+    IMPORTANT: Return ONLY valid JSON. No markdown formatting, no intro text.
+    Structure:
     {
       "nodes": [
-        { "id": "root", "label": "Short Title", "type": "core", "text": "Insight..." },
-        { "id": "n1", "parentId": "root", "label": "Short Title", "type": "challenge", "text": "Insight..." },
-        { "id": "n2", "parentId": "root", "label": "Short Title", "type": "resolution", "text": "Insight..." }
+        { "id": "root", "label": "Title", "type": "core", "text": "Insight..." },
+        { "id": "n1", "parentId": "root", "label": "Title", "type": "challenge", "text": "Insight..." },
+        { "id": "n2", "parentId": "root", "label": "Title", "type": "resolution", "text": "Insight..." }
       ],
-      "narrative": "Markdown formatted deep dive..."
-    }`;
+      "narrative": "## Title\\n\\nContent..."
+    }
+    Keep narrative under 200 words to ensure valid JSON.`;
 
     let userPrompt = "";
 
