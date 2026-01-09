@@ -57,21 +57,18 @@ export async function POST(req: Request) {
 
     const hf = new HfInference(HF_TOKEN);
 
-    // Use textGeneration with retry handled by logic or simple wrapper
-    // The library handles standard URLs automatically
-    const result = await hf.textGeneration({
+    // Switch to chatCompletion which maps to the "conversational" task type
+    const result = await hf.chatCompletion({
         model: MODEL,
-        inputs: `<s>[INST] ${systemPrompt} 
-
- ${userPrompt} [/INST]`,
-        parameters: {
-            max_new_tokens: 1024,
-            temperature: 0.7,
-            return_full_text: false,
-        }
+        messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt }
+        ],
+        max_tokens: 1024,
+        temperature: 0.7
     });
 
-    let text = result.generated_text || "";
+    let text = result.choices[0].message.content || "";
     
     // Cleanup JSON parsing from LLM output (it often adds extra text)
     const jsonMatch = text.match(/\{[\s\S]*\}/);
