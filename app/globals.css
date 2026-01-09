@@ -12,29 +12,19 @@
 
 body {
   color: var(--foreground);
-  background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #050510 100%);
-  background-size: 200% 200%;
-  animation: bgPulse 20s ease infinite;
-  overflow: hidden; /* App handles scrolling internally */
+  background: #000;
+  overflow-x: hidden;
+  font-family: 'Inter', sans-serif;
 }
 
-@keyframes bgPulse {
-  0% { background-position: 50% 50%; }
-  50% { background-position: 55% 55%; }
-  100% { background-position: 50% 50%; }
+/* Cinematic Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
 }
-
-/* Custom Scrollbar for specific containers */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+::-webkit-scrollbar-track {
+  background: #000; 
 }
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(0,0,0,0.2); 
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(0, 240, 255, 0.3); 
-  border-radius: 3px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #00f0ff; 
+::-webkit-scrollbar-thumb {
+  background: #333; 
+  border-radius: 4px;
 }
