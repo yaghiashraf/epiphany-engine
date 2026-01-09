@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { HfInference } from '@huggingface/inference';
-import { jsonrepair } from 'jsonrepair';
 
 const HF_TOKEN = process.env.HF_TOKEN;
 const MODEL = "meta-llama/Llama-3.2-3B-Instruct"; // Lightweight, fast, reliable
@@ -65,6 +64,22 @@ export async function POST(req: Request) {
     IMPORTANT: Do NOT output JSON. Use the "|||" separator exactly as requested.
     ${structureInstruction}
     Keep it profound but concise.`;
+
+    let userPrompt = "";
+
+    if (action === "deepen") {
+        userPrompt = `The user wants to "Drill Deeper" into this previous insight: "${previousNarrative}". 
+        Reveal the SUBCONSCIOUS ROOT (childhood/past) of this pattern.
+        Output following the TASK Part 1 and Part 2 format.`;
+    } else if (action === "challenge") {
+        userPrompt = `The user wants to "Challenge" this previous insight: "${previousNarrative}".
+        Provide a COUNTER-INTUITIVE perspective that flips the problem on its head.
+        Output following the TASK Part 1 and Part 2 format.`;
+    } else {
+        userPrompt = `Analyze this dilemma: "${query}".
+        Theme: ${bracket} life stage challenges.
+        Output following the TASK Part 1, 2, 3 and 4 format.`;
+    }
 
     const hf = new HfInference(HF_TOKEN);
 
