@@ -56,7 +56,7 @@ export async function POST(req: Request) {
 
     // Function to call HF with retry logic for 503 (Model Loading)
     const callHF = async (retries = 3): Promise<Response> => {
-        const response = await fetch(`https://api-inference.huggingface.co/models/${MODEL}`, {
+        const response = await fetch(`https://router.huggingface.co/hf-inference/models/${MODEL}`, {
             headers: {
                 Authorization: `Bearer ${HF_TOKEN}`,
                 "Content-Type": "application/json",
