@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
+import { HfInference } from '@huggingface/inference';
 
 const HF_TOKEN = process.env.HF_TOKEN;
-const MODEL = "HuggingFaceH4/zephyr-7b-beta"; // Reliable, free-tier friendly
+const MODEL = "HuggingFaceH4/zephyr-7b-beta";
 
 export async function POST(req: Request) {
   try {
@@ -54,46 +55,23 @@ export async function POST(req: Request) {
         Narrative should be 3 paragraphs, formatted with Markdown headers.`;
     }
 
-    // Function to call HF with retry logic for 503 (Model Loading)
-    const callHF = async (retries = 3): Promise<Response> => {
-        const response = await fetch(`https://router.huggingface.co/hf-inference/models/${MODEL}`, {
-            headers: {
-                Authorization: `Bearer ${HF_TOKEN}`,
-                "Content-Type": "application/json",
-            },
-            method: "POST",
-            body: JSON.stringify({
-                inputs: `<s>[INST] ${systemPrompt} 
+    const hf = new HfInference(HF_TOKEN);
+
+    // Use textGeneration with retry handled by logic or simple wrapper
+    // The library handles standard URLs automatically
+    const result = await hf.textGeneration({
+        model: MODEL,
+        inputs: `<s>[INST] ${systemPrompt} 
 
  ${userPrompt} [/INST]`,
-                parameters: {
-                    max_new_tokens: 1024,
-                    temperature: 0.7,
-                    return_full_text: false,
-                }
-            }),
-        });
-
-        if (response.status === 503 && retries > 0) {
-            const data = await response.json();
-            const waitTime = data.estimated_time || 20;
-            console.log(`Model loading... waiting ${waitTime}s`);
-            await new Promise(r => setTimeout(r, waitTime * 1000));
-            return callHF(retries - 1);
+        parameters: {
+            max_new_tokens: 1024,
+            temperature: 0.7,
+            return_full_text: false,
         }
+    });
 
-        return response;
-    };
-
-    const response = await callHF();
-
-    if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(`HF API Error: ${response.status} ${errText}`);
-    }
-
-    const result = await response.json();
-    let text = result[0]?.generated_text || "";
+    let text = result.generated_text || "";
     
     // Cleanup JSON parsing from LLM output (it often adds extra text)
     const jsonMatch = text.match(/\{[\s\S]*\}/);
@@ -101,7 +79,6 @@ export async function POST(req: Request) {
         const json = JSON.parse(jsonMatch[0]);
         return NextResponse.json(json);
     } else {
-        // Fallback if LLM fails JSON format (Safety Net)
         return NextResponse.json({
             nodes: [
                 { id: "root", label: "Analysis Failed", type: "core", text: "The engine could not parse the infinite." }
@@ -112,6 +89,7 @@ export async function POST(req: Request) {
 
   } catch (error: any) {
     console.error("API Route Error:", error);
+    // Determine status based on error message or type if possible
     return NextResponse.json({ error: error.message || "Unknown Error" }, { status: 500 });
   }
 }
