@@ -71,11 +71,30 @@ export async function POST(req: Request) {
 
     let text = result.choices[0].message.content || "";
     
-    // Cleanup JSON parsing from LLM output (it often adds extra text)
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-        const json = JSON.parse(jsonMatch[0]);
-        return NextResponse.json(json);
+    // Aggressive cleanup: Remove markdown code blocks and trailing text
+    text = text.replace(/```json/g, "").replace(/```/g, "").trim();
+    
+    // Find the first '{' and the last '}' to isolate JSON
+    const firstBrace = text.indexOf('{');
+    const lastBrace = text.lastIndexOf('}');
+    
+    if (firstBrace !== -1 && lastBrace !== -1) {
+        text = text.substring(firstBrace, lastBrace + 1);
+        try {
+            const json = JSON.parse(text);
+            return NextResponse.json(json);
+        } catch (e) {
+             // If standard parse fails, try a "dirty" fix for common unescaped newlines in narrative
+             try {
+                // Remove newlines inside strings might be too aggressive, 
+                // but let's try to escape unescaped double quotes inside value strings if possible.
+                // For now, simpler error is safer.
+                console.error("JSON Parse Failed:", text);
+                throw new Error("AI output malformed JSON. Please try again.");
+             } catch (e2) {
+                 throw e;
+             }
+        }
     } else {
         return NextResponse.json({
             nodes: [
