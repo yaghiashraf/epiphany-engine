@@ -110,8 +110,8 @@ export async function POST(req: Request) {
         });
     }
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("API Route Error:", error);
-    return NextResponse.json({ error: "Failed to generate epiphany" }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Unknown Error" }, { status: 500 });
   }
 }
